@@ -10,7 +10,7 @@ const config = require('./config/key');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // parse various different custom JSON types as JSON
-app.use(bodyParser.json({ type: 'application/*+json' }));
+app.use(bodyParser.json());
 
 const mongoose = require('mongoose');
 mongoose
@@ -31,6 +31,7 @@ app.post('/register', (req, res) => {
   // store information needed for registering into db
   const user = new User(req.body);
   user.save((err, userInfo) => {
+    console.log(userInfo);
     if (err) return res.json({ success: false, err });
     return res.status(200).json({ success: true });
   });
