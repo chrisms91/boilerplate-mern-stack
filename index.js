@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 5000;
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { User } = require('./models/User');
 
 const config = require('./config/key');
@@ -11,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // parse various different custom JSON types as JSON
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const mongoose = require('mongoose');
 mongoose
@@ -34,6 +36,35 @@ app.post('/register', (req, res) => {
     console.log(userInfo);
     if (err) return res.json({ success: false, err });
     return res.status(200).json({ success: true });
+  });
+});
+
+app.post('/login', (req, res) => {
+  // check if email exists in db
+  User.findOne({ email: req.body.email }, (err, user) => {
+    if (!user) {
+      return res.json({
+        loginSuccess: false,
+        message: "User email doesn't exist.",
+      });
+    }
+
+    // if email exists in db, check if pwd matches
+    user.comparePassword(req.body.password, (err, isMatch) => {
+      if (!isMatch)
+        return res.json({ loginSuccess: false, message: 'Wrong password' });
+
+      // if pwd matches, generate token
+      user.generateToken((err, user) => {
+        if (err) return res.status(400).send(err);
+
+        // need to store token.  but where?   local storage, cookie
+        res
+          .cookie('x_auth', user.token)
+          .status(200)
+          .json({ loginSuccess: true, userId: user._id });
+      });
+    });
   });
 });
 
