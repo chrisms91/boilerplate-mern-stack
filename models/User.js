@@ -63,12 +63,25 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
 userSchema.methods.generateToken = function (cb) {
   const user = this;
   // generate token with jsonwebtoken package
-  const token = jwt.sign({ id: user._id }, 'secretToken');
+  const token = jwt.sign(user._id.toHexString(), 'secretToken');
   console.log(token);
   user.token = token;
   user.save(function (err, user) {
     if (err) return cb(err);
     cb(null, user);
+  });
+};
+
+userSchema.methods.findByToken = function (token, cb) {
+  const user = this;
+
+  // decode token
+  jwt.verify(token, 'secretToken', function (err, decoded) {
+    // find user with user._id and compare token from db with token from client
+    user.findOne({ _id: decoded, token: token }, function (err, user) {
+      if (err) return cb(err);
+      cb(null, user);
+    });
   });
 };
 
