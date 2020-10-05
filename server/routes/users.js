@@ -46,7 +46,8 @@ router.post('/login', (req, res) => {
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
         res.cookie('w_authExp', user.tokenExp);
-        res.cookie('w_auth', user.token).status(200).json({
+        // 1 hour expiration for cookie
+        res.cookie('w_auth', user.token, { maxAge: 3600000 }).status(200).json({
           loginSuccess: true,
           userId: user._id,
         });
