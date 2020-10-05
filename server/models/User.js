@@ -62,9 +62,10 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
 
 userSchema.methods.generateToken = function (cb) {
   const user = this;
-  // generate token with jsonwebtoken package
-  const token = jwt.sign(user._id.toHexString(), 'secretToken');
-  console.log(token);
+  const token = jwt.sign(user._id.toHexString(), 'secret');
+  const oneHour = moment().add(1, 'hour').valueOf();
+
+  user.tokenExp = oneHour;
   user.token = token;
   user.save(function (err, user) {
     if (err) return cb(err);
