@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../models/User');
+
 const { auth } = require('../middleware/auth');
 
 //=================================
@@ -14,7 +15,6 @@ router.get('/auth', auth, (req, res) => {
     isAuth: true,
     email: req.user.email,
     name: req.user.name,
-    lastname: req.user.lastname,
     role: req.user.role,
     image: req.user.image,
   });
@@ -46,11 +46,13 @@ router.post('/login', (req, res) => {
       user.generateToken((err, user) => {
         if (err) return res.status(400).send(err);
         res.cookie('w_authExp', user.tokenExp);
-        // 1 hour expiration for cookie
-        res.cookie('w_auth', user.token, { maxAge: 3600000 }).status(200).json({
-          loginSuccess: true,
-          userId: user._id,
-        });
+        res
+          .cookie('w_auth', user.token, { maxAge: 3600000 }) // 1 hour expiration
+          .status(200)
+          .json({
+            loginSuccess: true,
+            userId: user._id,
+          });
       });
     });
   });

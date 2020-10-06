@@ -1,17 +1,6 @@
 import axios from 'axios';
-import { USER_SERVER } from '../components/Config';
 import { LOGIN_USER, REGISTER_USER, AUTH_USER, LOGOUT_USER } from './types';
-
-export function loginUser(dataToSubmit) {
-  const request = axios
-    .post(`${USER_SERVER}/login`, dataToSubmit)
-    .then((response) => response.data);
-
-  return {
-    type: LOGIN_USER,
-    payload: request,
-  };
-}
+import { USER_SERVER } from '../components/Config.js';
 
 export function registerUser(dataToSubmit) {
   const request = axios
@@ -20,6 +9,17 @@ export function registerUser(dataToSubmit) {
 
   return {
     type: REGISTER_USER,
+    payload: request,
+  };
+}
+
+export function loginUser(dataToSubmit) {
+  const request = axios
+    .post(`${USER_SERVER}/login`, dataToSubmit)
+    .then((response) => response.data);
+
+  return {
+    type: LOGIN_USER,
     payload: request,
   };
 }

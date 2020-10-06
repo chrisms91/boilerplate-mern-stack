@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const saltRounds = 10;
-const Schema = mongoose.Schema;
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
-const userSchema = Schema({
+const userSchema = mongoose.Schema({
   name: {
     type: String,
     maxlength: 50,
@@ -16,11 +16,7 @@ const userSchema = Schema({
   },
   password: {
     type: String,
-    minlength: 5,
-  },
-  lastname: {
-    type: String,
-    maxlength: 50,
+    minglength: 5,
   },
   role: {
     type: Number,
@@ -36,9 +32,10 @@ const userSchema = Schema({
 });
 
 userSchema.pre('save', function (next) {
-  const user = this;
+  var user = this;
+
   if (user.isModified('password')) {
-    // encrypt password here
+    // console.log('password changed')
     bcrypt.genSalt(saltRounds, function (err, salt) {
       if (err) return next(err);
 
@@ -61,9 +58,11 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
 };
 
 userSchema.methods.generateToken = function (cb) {
-  const user = this;
-  const token = jwt.sign(user._id.toHexString(), 'secret');
-  const oneHour = moment().add(1, 'hour').valueOf();
+  var user = this;
+  console.log('user', user);
+  console.log('userSchema', userSchema);
+  var token = jwt.sign(user._id.toHexString(), 'secret');
+  var oneHour = moment().add(1, 'hour').valueOf();
 
   user.tokenExp = oneHour;
   user.token = token;
@@ -74,12 +73,10 @@ userSchema.methods.generateToken = function (cb) {
 };
 
 userSchema.statics.findByToken = function (token, cb) {
-  const user = this;
+  var user = this;
 
-  // decode token
-  jwt.verify(token, 'secretToken', function (err, decoded) {
-    // find user with user._id and compare token from db with token from client
-    user.findOne({ _id: decoded, token: token }, function (err, user) {
+  jwt.verify(token, 'secret', function (err, decode) {
+    user.findOne({ _id: decode, token: token }, function (err, user) {
       if (err) return cb(err);
       cb(null, user);
     });

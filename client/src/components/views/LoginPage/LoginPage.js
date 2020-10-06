@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { loginUser } from '../../../_actions/user_action';
+import { loginUser } from '../../../_actions/user_actions';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Icon, Input, Button, Checkbox, Typography } from 'antd';
@@ -19,9 +19,11 @@ function LoginPage(props) {
     setRememberMe(!rememberMe);
   };
 
-  const initialEmail = localStorage.getItem('rememberMe')
-    ? localStorage.getItem('rememberMe')
-    : '';
+  const initialEmail =
+    localStorage.getItem('rememberMe') &&
+    localStorage.getItem('rememberMe') !== 'undefined'
+      ? localStorage.getItem('rememberMe')
+      : '';
 
   return (
     <Formik
@@ -43,7 +45,6 @@ function LoginPage(props) {
             email: values.email,
             password: values.password,
           };
-
           dispatch(loginUser(dataToSubmit))
             .then((response) => {
               if (response.payload.loginSuccess) {
@@ -73,12 +74,12 @@ function LoginPage(props) {
           values,
           touched,
           errors,
-          dirty,
+          // dirty,
           isSubmitting,
           handleChange,
           handleBlur,
           handleSubmit,
-          handleReset,
+          // handleReset,
         } = props;
         return (
           <div className="app">
@@ -171,7 +172,7 @@ function LoginPage(props) {
                     Log in
                   </Button>
                 </div>
-                Or <a href="/register">Register Now!</a>
+                Or <a href="/register">register now!</a>
               </Form.Item>
             </form>
           </div>
