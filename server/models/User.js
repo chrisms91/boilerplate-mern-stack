@@ -13,6 +13,14 @@ const userSchema = mongoose.Schema({
     type: String,
     trim: true,
     unique: 1,
+    validate: {
+      validator: function (v) {
+        return this.model('User')
+          .findOne({ email: v })
+          .then((user) => !user);
+      },
+      message: (props) => `${props.value} is already used by another user`,
+    },
   },
   password: {
     type: String,

@@ -40,3 +40,29 @@ input.error {
   height: 5px;
   margin-top: -12px;
 }
+
+.form-error-msg {
+  margin-left: 4em;
+  margin-bottom: 24px;
+}
+
+.form-label-required {
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+}
+
+.form-label-required::before {
+  display: inline-block;
+  margin-right: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}
+
+@media (max-width: 575px) {
+  .form-error-msg {
+    margin-left: 0;
+  }
+}

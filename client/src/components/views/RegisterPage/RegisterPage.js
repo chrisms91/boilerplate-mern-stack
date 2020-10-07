@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 
 import { Form, Input, Button, Typography } from 'antd';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const formItemLayout = {
   labelCol: {
@@ -16,7 +16,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 24 },
   },
 };
 const tailFormItemLayout = {
@@ -25,14 +25,12 @@ const tailFormItemLayout = {
       span: 24,
       offset: 0,
     },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
   },
 };
 
 function RegisterPage(props) {
+  const [formErrorMessage, setFormErrorMessage] = useState('');
+
   const dispatch = useDispatch();
   return (
     <Formik
@@ -67,7 +65,14 @@ function RegisterPage(props) {
             if (response.payload.success) {
               props.history.push('/login');
             } else {
-              alert(response.payload.err.errmsg);
+              const {
+                payload: { err },
+              } = response;
+
+              if (err.errors.email.name === 'ValidatorError') {
+                console.log(err.errors.email.message);
+                setFormErrorMessage(err.errors.email.message);
+              }
             }
           });
 
@@ -93,7 +98,8 @@ function RegisterPage(props) {
               {...formItemLayout}
               onSubmit={handleSubmit}
             >
-              <Form.Item required label="Name">
+              <label className="form-label-required">Name</label>
+              <Form.Item required>
                 <Input
                   id="name"
                   placeholder="John Doe"
@@ -112,9 +118,9 @@ function RegisterPage(props) {
                 )}
               </Form.Item>
 
+              <label className="form-label-required">Email</label>
               <Form.Item
                 required
-                label="Email"
                 hasFeedback
                 validateStatus={
                   errors.email && touched.email ? 'error' : 'success'
@@ -138,9 +144,9 @@ function RegisterPage(props) {
                 )}
               </Form.Item>
 
+              <label className="form-label-required">Password</label>
               <Form.Item
                 required
-                label="Password"
                 hasFeedback
                 validateStatus={
                   errors.password && touched.password ? 'error' : 'success'
@@ -164,7 +170,8 @@ function RegisterPage(props) {
                 )}
               </Form.Item>
 
-              <Form.Item required label="Confirm" hasFeedback>
+              <label className="form-label-required">Confirm Password</label>
+              <Form.Item required hasFeedback>
                 <Input
                   id="confirmPassword"
                   placeholder="Confirm your Password"
@@ -183,11 +190,28 @@ function RegisterPage(props) {
                 )}
               </Form.Item>
 
+              {formErrorMessage && (
+                <label>
+                  <p
+                    style={{
+                      color: '#ff0000bf',
+                      fontSize: '0.7rem',
+                      border: '1px solid',
+                      padding: '1rem',
+                      borderRadius: '10px',
+                    }}
+                  >
+                    {formErrorMessage}
+                  </p>
+                </label>
+              )}
+
               <Form.Item {...tailFormItemLayout}>
                 <Button
                   onClick={handleSubmit}
                   type="primary"
                   disabled={isSubmitting}
+                  style={{ minWidth: '100%' }}
                 >
                   Submit
                 </Button>
