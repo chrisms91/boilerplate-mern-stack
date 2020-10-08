@@ -12,15 +12,15 @@ const userSchema = mongoose.Schema({
   email: {
     type: String,
     trim: true,
-    unique: 1,
-    validate: {
-      validator: function (v) {
-        return this.model('User')
-          .findOne({ email: v })
-          .then((user) => !user);
-      },
-      message: (props) => `${props.value} is already used by another user`,
-    },
+
+    // validate: {
+    //   validator: function (v) {
+    //     return this.model('User')
+    //       .findOne({ email: v })
+    //       .then((user) => !user);
+    //   },
+    //   message: (props) => `${props.value} is already used by another user`,
+    // },
   },
   password: {
     type: String,
@@ -41,6 +41,17 @@ const userSchema = mongoose.Schema({
 
 userSchema.pre('save', function (next) {
   var user = this;
+
+  if (user.isModified('email')) {
+    console.log('yop');
+    User.find({ email: user.email }, function (err, docs) {
+      if (!docs.length) {
+        next();
+      } else {
+        next(`${user.email} is already used by another user`);
+      }
+    });
+  }
 
   if (user.isModified('password')) {
     // console.log('password changed')
@@ -74,6 +85,7 @@ userSchema.methods.generateToken = function (cb) {
 
   user.tokenExp = oneHour;
   user.token = token;
+
   user.save(function (err, user) {
     if (err) return cb(err);
     cb(null, user);

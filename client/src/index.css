@@ -60,6 +60,17 @@ input.error {
   line-height: 1;
   content: '*';
 }
+.ant-menu-item.disable-highlight.ant-menu-item-selected {
+  background-color: transparent; /*Overriden property*/
+}
+
+.ant-menu-item.ant-menu-item-selected {
+  background-color: transparent;
+}
+
+.ant-menu-item-selected > a {
+  color: rgba(0, 0, 0, 0.65);
+}
 
 @media (max-width: 575px) {
   .form-error-msg {

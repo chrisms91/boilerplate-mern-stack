@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LeftMenu from './Sections/LeftMenu';
 import RightMenu from './Sections/RightMenu';
-import { Drawer, Button, Icon } from 'antd';
+import { Drawer, Button, Icon, Divider } from 'antd';
 import './Sections/NavBar.css';
 
 function NavBar() {
@@ -28,7 +28,7 @@ function NavBar() {
           <LeftMenu mode="horizontal" />
         </div>
         <div className="menu_rigth">
-          <RightMenu mode="horizontal" />
+          <RightMenu mode="horizontal" mobile={false} />
         </div>
         <Button
           className="menu__mobile-button"
@@ -46,7 +46,8 @@ function NavBar() {
           visible={visible}
         >
           <LeftMenu mode="inline" />
-          <RightMenu mode="inline" />
+          <Divider />
+          <RightMenu mode="inline" mobile={true} />
         </Drawer>
       </div>
     </nav>

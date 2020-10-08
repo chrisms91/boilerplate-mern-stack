@@ -68,11 +68,7 @@ function RegisterPage(props) {
               const {
                 payload: { err },
               } = response;
-
-              if (err.errors.email.name === 'ValidatorError') {
-                console.log(err.errors.email.message);
-                setFormErrorMessage(err.errors.email.message);
-              }
+              setFormErrorMessage(err);
             }
           });
 
